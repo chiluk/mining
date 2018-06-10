@@ -1,0 +1,31 @@
+#!/bin/bash
+# export DISPLAY=:0
+# GPUTargetFanSpeed 60
+# ~/bin/ethminer -U -F http://ethereumpool.co/?miner=43@0x2c9dfb3c0200051ebabec0fdcb5b70258242f11f@bonus
+# ~/bin/ethminer -U -F http://ethereumpool.co/?miner=43@0x2c9dfb3c0200051ebabec0fdcb5b70258242f11f@bonus
+export DISPLAY=:2
+export XAUTHORITY=/run/user/1000/gdm/Xauthority
+MEMOC=800
+NUMGPUS=2
+sudo nvidia-smi -pm 1
+sudo nvidia-smi -pl 71
+
+for (( i=0; i<${NUMGPUS}; i++ ))
+do
+	nvidia-settings -a [gpu:${i}]/GPUMemoryTransferRateOffset[3]=${MEMOC}
+	nvidia-settings -a [gpu:${i}]/GPUFanControlState=1
+done
+
+# Set Fan speeds for each card since each gpu has different heat sources to contend with.
+nvidia-settings -a [fan:0]/GPUTargetFanSpeed=70
+nvidia-settings -a [fan:1]/GPUTargetFanSpeed=55
+
+~/bin/ethminer -HWMON 1 -U -P stratum+ssl://0x2c9dfb3c0200051ebabec0fdcb5b70258242f11f.bonus@us1.ethermine.org:5555 -P stratum+ssl://0x2c9dfb3c0200051ebabec0fdcb5b70258242f11f.bonus@us2.ethermine.org:5555
+
+# Reset to defaults after mining has completed.
+for (( i=0; i<${NUMGPUS}; i++ ))
+do
+	nvidia-settings -a [gpu:${i}]/GPUMemoryTransferRateOffset[3]=0
+	nvidia-settings -a [gpu:${i}]/GPUFanControlState=0
+done
+sudo nvidia-smi -pl 120
