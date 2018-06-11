@@ -39,7 +39,6 @@ function dumpjson
 #	done
 #}
 
-
 if [ -e $TRANSCODELIST ]; then
 	rm $TRANSCODELIST
 fi
@@ -55,6 +54,8 @@ cat ${TRANSCODELIST} | while read INFILE ; do
 	# -vf crop=1920:800:0:140 / auto trims movie
 	# 
 	echo ${INFILE}
+
+	# default is vbr_hq
 	ffmpeg -y \
 		-i ${INFILE} \
 		-vf ${CROP} \
@@ -62,7 +63,7 @@ cat ${TRANSCODELIST} | while read INFILE ; do
 		-c:v hevc_nvenc -preset slow -rc vbr_hq \
 		-c:a copy \
 		-c:s copy \
-		${OUTFILE} > /tmp/ffmpeg.out 2>&1
+		${OUTFILE} > /tmp/ffmpeg.out 2> /tmp/ffmpeg.err 
 
 	exit
 done
