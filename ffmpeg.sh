@@ -46,7 +46,7 @@ find ${INDIR} -iname \*.mkv >> $TRANSCODELIST
 
 cat ${TRANSCODELIST} | while read INFILE ; do
 	dumpjson ${INFILE}
-	OUTFILE=${OUTDIR}${INFILE##*/}
+	OUTFILE=${OUTDIR}/${INFILE##*/}
 	echo "Writing to $OUTFILE"
 
 	CROP=`ffmpeg -ss 200 -i ${INFILE} -t 10 -vf cropdetect -f null - 2>&1 | awk '/crop/ { print $NF }' | tail -1`
@@ -56,14 +56,16 @@ cat ${TRANSCODELIST} | while read INFILE ; do
 	echo ${INFILE}
 
 	# default is vbr_hq
-	ffmpeg -y \
+#	 	-hwaccel cuvid \
+#	 	-c:v h264_cuvid \
+	ffmpeg -y -nostdin \
 		-i ${INFILE} \
 		-vf ${CROP} \
 		-map 0:v:0 -map 0:a -map 0:s \
 		-c:v hevc_nvenc -preset slow -rc vbr_hq \
 		-c:a copy \
 		-c:s copy \
-		${OUTFILE} > /tmp/ffmpeg.out 2> /tmp/ffmpeg.err 
+		${OUTFILE} > /tmp/ffmpeg.out 2> /tmp/ffmpeg.err
 
 	exit
 done
