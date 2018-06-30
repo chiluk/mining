@@ -3,7 +3,7 @@
 # GPUTargetFanSpeed 60
 # ~/bin/ethminer -U -F http://ethereumpool.co/?miner=43@0x2c9dfb3c0200051ebabec0fdcb5b70258242f11f@bonus
 # ~/bin/ethminer -U -F http://ethereumpool.co/?miner=43@0x2c9dfb3c0200051ebabec0fdcb5b70258242f11f@bonus
-export DISPLAY:=:2
+export DISPLAY=${DISPLAY:-":2"}
 export XAUTHORITY=/run/user/1000/gdm/Xauthority
 MEMOC=800
 NUMGPUS=2
