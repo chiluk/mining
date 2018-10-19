@@ -29,6 +29,11 @@ function dumpjson
 	ffprobe -print_format json -show_streams ${VIDINFILE} 2>&1 >${JSONOUT}
 }
 
+function SelectAudioStream
+{
+	echo "selected"
+}
+
 #function figureaudio
 #{
 	# If DTS-MA add it to map and track list
@@ -55,14 +60,13 @@ cat ${TRANSCODELIST} | while read INFILE ; do
 	# 
 	echo ${INFILE}
 
-	# default is vbr_hq
-#	 	-hwaccel cuvid \
-#	 	-c:v h264_cuvid \
+		# -hwaccel cuvid \
+		# -c:v h264_cuvid \
 	ffmpeg -y -nostdin \
 		-i ${INFILE} \
 		-vf ${CROP} \
 		-map 0:v:0 -map 0:a -map 0:s \
-		-c:v hevc_nvenc -preset slow -rc vbr_hq \
+		-c:v hevc_nvenc -preset slow -rc vbr_hq -level 5.1 \
 		-c:a copy \
 		-c:s copy \
 		${OUTFILE} > /tmp/ffmpeg.out 2> /tmp/ffmpeg.err
