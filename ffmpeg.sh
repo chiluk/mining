@@ -10,7 +10,7 @@ function checkcrop
 {
 	FILE=$1
 	export crop=`ffmpeg -ss 200 -i $FILE -t 10 -vf cropdetect -f null - 2>&1 | awk '/crop/ { print $NF }' | tail -1`
-	echo $cropvalue
+	echo $crop
 }
 
 function numstreams
@@ -57,7 +57,7 @@ cat ${TRANSCODELIST} | while read INFILE ; do
 	CROP=`ffmpeg -ss 200 -i ${INFILE} -t 10 -vf cropdetect -f null - 2>&1 | awk '/crop/ { print $NF }' | tail -1`
 	# -y = Force overwirite of output
 	# -vf crop=1920:800:0:140 / auto trims movie
-	# 
+	# CHILUK: SEE ffmpeg -h decoder=h264_cuvid | grep -crop and fix CROP arg
 	echo ${INFILE}
 
 		# -hwaccel cuvid \
